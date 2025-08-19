@@ -1,7 +1,7 @@
-site_name: Template de Entrega
-site_author: Sandmann, H.
-site_url: https://hsandmann.github.io/documentation.template
-repo_url: https://github.com/hsandmann/documentation.template
+site_name: Machine Learning
+site_author: Mateus Colmeal
+site_url: https://colmeal.github.io/machine-learning
+repo_url: https://github.com/colmeal/machine-learning.git
 repo_name: github/documentation.template
 
 theme:
@@ -132,7 +132,8 @@ extra_javascript:
   - https://fastly.jsdelivr.net/npm/echarts/dist/echarts.min.js
 
 nav:
-  - Home: index.md
+  - Home: index.md/
+  - Árvore de decisão: ./arvore-decisao/main.md
   - Roteiros:
     - Roteiro 1: ./roteiro1/main.md
     - Roteiro 2: ./roteiro2/main.md

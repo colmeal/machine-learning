@@ -40,7 +40,7 @@ x_train, x_test, y_train, y_test = train_test_split(
 
 ## 4. Treinamento dos Modelos 
 
-O algoritmo de aprendizado de máquina implementado foi:
+O Algoritmo de aprendizado de máquina implementado foi:
 
 - **Decision Tree:** Um modelo interpretável que constrói uma árvore de decisões baseada nos atributos mais relevantes. Ele permite visualizar quais fatores são mais importantes para determinar se uma pessoa está "fit" ou "not fit".
 

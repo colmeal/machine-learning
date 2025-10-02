@@ -97,11 +97,11 @@ O desempenho foi avaliado no conjunto de teste utilizando acurácia, matriz de c
 
 - **Curva de Acurácia vs k:**  
   Observa-se que a acurácia média cresce até valores próximos de k=14, que foi o melhor hiperparâmetro encontrado.
-  ![Curva de Acurácia](Acuracia.png)
+  ![Curva de Acurácia](../img/Acuracia.png)
 
 - **Fronteira de Decisão em PCA 2D:**  
   A projeção PCA em 2 dimensões mostra que as classes se sobrepõem bastante, justificando a dificuldade do KNN em separar completamente "Fit" de "Não Fit".
-![Fronteira KNN](KNN.png)
+![Fronteira KNN](../img/KNN.png)
 ---
 
 ## 6. Relatório Final

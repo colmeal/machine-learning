@@ -9,6 +9,8 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
+from collections import defaultdict
+
 
 # === 1. Carregar dados ===
 file_path = "docs/data/fitness_dataset.csv"
@@ -105,10 +107,7 @@ plt.xlabel("PC1")
 plt.ylabel("PC2")
 plt.show()
 
-# === Gráfico 3: Fronteira PCA 2D (com amostragem estratificada para visualização) ===
-from collections import defaultdict
 
-# 1) Pré-processa e projeta para PCA (treino/teste como antes)
 imp = SimpleImputer(strategy="median")
 scaler = StandardScaler()
 
@@ -122,7 +121,6 @@ pca = PCA(n_components=2, random_state=42)
 X_train_pca = pca.fit_transform(X_train_s)
 X_test_pca  = pca.transform(X_test_s)
 
-# 2) Treina o KNN na projeção PCA usando os melhores hiperparâmetros do GridSearch
 best_k = gs.best_params_["knn__n_neighbors"]
 best_w = gs.best_params_["knn__weights"]
 best_p = gs.best_params_["knn__p"]
@@ -130,15 +128,12 @@ best_p = gs.best_params_["knn__p"]
 knn_pca = KNeighborsClassifier(n_neighbors=best_k, weights=best_w, p=best_p)
 knn_pca.fit(X_train_pca, y_train)
 
-# 3) Amostragem estratificada dos pontos só para PLOT (modelo continua treinado com 100%)
 def stratified_downsample(X2d, y_vec, max_por_classe=150, seed=42):
     rng = np.random.RandomState(seed)
     X_out, y_out = [], []
     idx_por_classe = defaultdict(list)
-    # índices por classe
     for i, cls in enumerate(np.asarray(y_vec)):
         idx_por_classe[cls].append(i)
-    # sorteia até max_por_classe por classe (ou todos, se tiver menos)
     for cls, idxs in idx_por_classe.items():
         idxs = np.array(idxs)
         rng.shuffle(idxs)
@@ -148,10 +143,8 @@ def stratified_downsample(X2d, y_vec, max_por_classe=150, seed=42):
         y_out.append(np.asarray(y_vec)[sel])
     return np.vstack(X_out), np.concatenate(y_out)
 
-# ajuste aqui o tamanho da amostra por classe para “limpar” o gráfico
 X_plot, y_plot = stratified_downsample(X_train_pca, y_train, max_por_classe=120)
 
-# 4) Gera a malha para a fronteira de decisão (continua densa para ficar suave)
 h = 0.03
 x_min, x_max = X_train_pca[:, 0].min() - 0.5, X_train_pca[:, 0].max() + 0.5
 y_min, y_max = X_train_pca[:, 1].min() - 0.5, X_train_pca[:, 1].max() + 0.5
@@ -159,7 +152,6 @@ xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                      np.arange(y_min, y_max, h))
 Z = knn_pca.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
 
-# 5) Plot enxuto
 plt.figure(figsize=(9,7))
 plt.contourf(xx, yy, Z, alpha=0.30)          # fundo: fronteira
 plt.scatter(X_plot[:,0], X_plot[:,1],        # pontos: amostra estratificada

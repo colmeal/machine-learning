@@ -1,128 +1,127 @@
 # Relatório do Projeto de Machine Learning – KNN
 
-## 1. Exploração dos Dados
+---
 
-Nesta etapa, foi realizada uma análise inicial do conjunto de dados `fitness_dataset.csv`, contendo informações sobre hábitos de vida e condicionamento físico dos participantes, como idade, peso, nível de atividade física e hábito de fumar.  
-A variável alvo `is_fit` indica se a pessoa está em boa condição física (1) ou não (0).
+## 1. Exploração dos Dados 
 
-A análise revelou que há mais pessoas classificadas como "Not Fit" (0) do que "Fit" (1), evidenciando um leve desbalanceamento das classes.  
-Esse desequilíbrio impacta diretamente o desempenho de modelos de classificação, pois eles tendem a ter maior acerto na classe majoritária.
+Descrição
+- Dataset: `fitness_dataset.csv` com atributos demográficos e de estilo de vida (age, weight_kg, activity_index, smokes, etc.).
+- Variável alvo: `is_fit` (1 = Fit, 0 = Not Fit).
+- Observação: leve desbalanceamento (mais Not Fit que Fit) e sobreposição entre classes em algumas projeções (PCA).
 
-Essas informações iniciais ajudam a entender o perfil dos dados e a importância de avaliar o modelo com métricas além da acurácia, como precisão, recall e F1-score.
+Visualizações e estatísticas (exemplos gerados pelo código):
+- Distribuição de `is_fit` (contagem/percentual).
+- Crosstab por gênero x is_fit.
+- Estatísticas descritivas (mean, std, min, max) para atributos numéricos.
+
+![Distribuição de Fitness](../img/Figure_1.png)
 
 ---
 
-## 2. Pré-processamento
+## 2. Pré-processamento 
 
-As seguintes etapas foram aplicadas ao dataset:
+Descrição
+- One-hot encoding apenas para colunas categóricas presentes.
+- Conversão de `smokes` para binário (0 = no, 1 = yes) antes do encoding, se aplicável.
+- Conversão forçada para numérico com `pd.to_numeric(..., errors="coerce")`.
+- Preenchimento conservador de NaN usando médias das colunas do treino (evita vazamento).
+- Padronização com `StandardScaler` (essencial para KNN).
 
-- Conversão da coluna `smokes` para valores binários (`smokes_bin`), onde 0 = não fuma e 1 = fuma.
-- Seleção apenas de variáveis numéricas para o modelo: `age`, `weight_kg`, `activity_index`, `smokes_bin`.
-- Tratamento de valores ausentes com `SimpleImputer` (estratégia: mediana).
-- Padronização dos dados com `StandardScaler`, para garantir que todas as variáveis estejam na mesma escala (média = 0, desvio = 1).
-
+Trecho de código (do script):
 ```python
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler
+# one-hot + align
+x_train = pd.get_dummies(x_train, drop_first=True)
+x_test  = pd.get_dummies(x_test,  drop_first=True)
+x_train, x_test = x_train.align(x_test, join="left", axis=1, fill_value=0)
 
-imputer = SimpleImputer(strategy="median")
-X_imputed = imputer.fit_transform(X)
+# fillna com médias do treino e padronização
+x_train = x_train.fillna(x_train.mean(numeric_only=True))
+x_test  = x_test.fillna(x_train.mean(numeric_only=True))
 
 scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X_imputed)
+Xtr = scaler.fit_transform(x_train)
+Xte = scaler.transform(x_test)
 ```
 
 ---
 
-## 3. Divisão dos Dados
+## 3. Divisão dos Dados 
 
-O conjunto de dados foi dividido em 80% treino e 20% teste, de forma estratificada, preservando a proporção entre as classes `is_fit`.
+Descrição
+- Conjuntos já fornecidos pré-separados:  
+  `data/dataset-x-train.csv`, `data/dataset-x-test.csv`, `data/dataset-y-train.csv`, `data/dataset-y-test.csv`.  
+  Separação aproximada 80% treino / 20% teste (estratificada no preparo).
 
+Observação: manter estratificação na divisão inicial e validar proporções de `is_fit`.
+
+---
+
+## 4. Treinamento do Modelo
+
+Descrição
+- Algoritmo: `KNeighborsClassifier`.
+- Busca por hiperparâmetros com `GridSearchCV` (cv=5, n_jobs=-1) testando:
+  - `n_neighbors`: 1..20
+  - `weights`: ["uniform","distance"]
+  - `p`: [1,2]
+
+Melhores parâmetros encontrados (execução atual):
+- k = 18  
+- weights = 'distance'  
+- p = 2 (Euclidiana)
+
+Trecho de código (do script):
 ```python
-from sklearn.model_selection import train_test_split
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X_scaled, y, test_size=0.2, random_state=42, stratify=y
-)
-```
-
-Essa divisão permite avaliar o desempenho do modelo em dados que ele nunca viu, evitando overfitting.
-
----
-
-## 4. Treinamento do Modelo KNN
-
-O algoritmo escolhido foi o K-Nearest Neighbors (KNN), que classifica um indivíduo de acordo com as classes dos seus vizinhos mais próximos no espaço de atributos.
-
-`GridSearchCV` foi utilizado para testar diferentes valores de k, pesos (`uniform` e `distance`) e métricas de distância (`p=1` Manhattan, `p=2` Euclidiana).
-
-O melhor modelo foi encontrado com `k = 14`, `weights = uniform` e `p = 1` (Manhattan).
-
-**Exemplo de código de treinamento:**
-
-```python
-from sklearn.model_selection import GridSearchCV
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.pipeline import Pipeline
-
-pipe = Pipeline([
-    ("imputer", SimpleImputer(strategy="median")),
-    ("scaler", StandardScaler()),
-    ("knn", KNeighborsClassifier())
-])
-
-param_grid = {
-    "knn__n_neighbors": range(1,16),
-    "knn__weights": ["uniform","distance"],
-    "knn__p": [1,2]
-}
-
-gs = GridSearchCV(pipe, param_grid, cv=3, scoring="accuracy")
-gs.fit(X_train, y_train)
-best_model = gs.best_estimator_
+param_grid = {"n_neighbors": range(1,21), "weights": ["uniform","distance"], "p": [1,2]}
+gs = GridSearchCV(KNeighborsClassifier(), param_grid, cv=5, scoring="accuracy", n_jobs=-1)
+gs.fit(Xtr, y_train)
+best_params = gs.best_params_
 ```
 
 ---
 
-## 5. Avaliação do Modelo
+## 5. Avaliação do Modelo 
 
-O desempenho foi avaliado no conjunto de teste utilizando acurácia, matriz de confusão, precisão, recall e F1-score.
+Descrição
+- Métricas calculadas no conjunto de teste: acurácia, precision, recall, f1 (classification_report) e matriz de confusão.
+- Curva de acurácia vs k por cross-val para justificar escolha de k.
+- Visualização da fronteira de decisão em PCA 2D para interpretação.
 
-![Matriz de Confusão](../img/MatrizFitorNot.png)
+Resultados (execução atual)
+- Acurácia (teste): ~0.75  
+- Precision (macro): ~0.74  
+- Recall (macro): ~0.73  
+- F1 (macro): ~0.74
 
-- **Acurácia:** ~72%
-- **Matriz de Confusão:**  
-  O modelo acerta 197 "Não Fit" corretamente, mas ainda classifica 76 "Fit" como "Não Fit".  
-  Isso mostra que ele tem maior recall para a classe "Não Fit", mas menor capacidade de identificar corretamente os "Fit".
+Matriz de confusão (valores observados)
+- 203 Not Fit corretamente classificados  
+- 37 Not Fit classificados como Fit  
+- 68 Fit classificados como Not Fit  
+- 92 Fit corretamente classificados
 
-- **Curva de Acurácia vs k:**  
-  Observa-se que a acurácia média cresce até valores próximos de k=14, que foi o melhor hiperparâmetro encontrado.
+- `Acuracia.png` — Curva Acurácia vs k  
   ![Curva de Acurácia](../img/Acuracia.png)
+- `Matriz Fit or not.png` — Matriz de Confusão  
+  ![Matriz de Confusão](../img/MatrizFitorNot.png)
+- `KNN.png` — Fronteira de Decisão (PCA 2D)  
+  ![Fronteira KNN](../img/KNN.png)
 
-- **Fronteira de Decisão em PCA 2D:**  
-  A projeção PCA em 2 dimensões mostra que as classes se sobrepõem bastante, justificando a dificuldade do KNN em separar completamente "Fit" de "Não Fit".
-![Fronteira KNN](../img/KNN.png)
+Trecho de avaliação (do script):
+```python
+y_pred = best_knn.predict(Xte)
+print(classification_report(y_test, y_pred))
+cm = confusion_matrix(y_test, y_pred)
+```
+
 ---
 
-## 6. Relatório Final
+## 6. Relatório Final 
 
-O modelo KNN alcançou 72% de acurácia no conjunto de teste, mostrando-se razoável para o problema, mas ainda limitado pela sobreposição entre classes e o leve desbalanceamento do dataset.
-
-**Pontos fortes:**
-- Fácil implementação e interpretação.
-- Bom desempenho geral na classe majoritária ("Não Fit").
-
-**Pontos fracos:**
-- Tendência a classificar erroneamente indivíduos "Fit" como "Não Fit".
-- Sensível ao desbalanceamento das classes e à presença de ruído.
-
-**Possíveis Melhorias:**
-- Balancear as classes (SMOTE ou undersampling).
-- Feature engineering com variáveis adicionais (altura, IMC, qualidade do sono, nutrição).
-- Comparar com outros modelos (Random Forest, Logistic Regression, SVM).
-- Ajustar métrica de distância (Minkowski, Mahalanobis).
-- Validação cruzada mais robusta (k-folds maiores).
-
-Em resumo, o KNN demonstrou potencial para identificar padrões de condicionamento físico, mas ainda há espaço para otimizações para aumentar a capacidade de identificar corretamente os indivíduos classificados como Fit.
-
+- Processo completo: carregamento → pré-processamento → padronização → GridSearch → avaliação → salvamento de figuras.
+- Resultados: KNN com (k=18, weights='distance', p=2) apresenta acurácia ~75% e métricas macro ~0.74.
+- Interpretação: modelo robusto para classe majoritária; erros concentrados onde há sobreposição de características entre classes.
+- Melhorias propostas:
+  - Balanceamento (SMOTE / undersampling) e reavaliação por F1-macro.
+  - Feature engineering (IMC, horas sono, qualidade nutrição).
+  - Comparar com Random Forest, SVM e Logistic Regression.
 ---

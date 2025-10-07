@@ -1,0 +1,3 @@
+Algoritmo,Métrica principal,Valor,Observação
+KNN (sup.),Accuracy,0.7325,Bom preditor direto de is_fit; AUC 0.80
+K-Means (não sup.),ARI,0.0557,Agrupa perfis; coerência moderada (V-Measure 0.05)

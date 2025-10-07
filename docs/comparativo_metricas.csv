@@ -1,0 +1,3 @@
+,Acurácia,Precisão,Recall,F1
+KNN (Supervisionado),0.74,0.7059,0.6,0.6486
+K-Means (Não supervisionado),0.6,0.0,0.0,0.0

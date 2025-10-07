@@ -73,7 +73,7 @@ print("\n== Classification Report (KNN) ==")
 print(classification_report(y_test, y_pred, target_names=["Not Fit (0)","Fit (1)"], zero_division=0))
 
 # === 6) GRÁFICO 1 – Curva de acurácia vs k (fixando weights e p ótimos) ===
-fixed_weights = best_params["weights"]
+fixed_weights = best_params["weights"]          
 fixed_p       = best_params["p"]
 k_values = list(range(1, 21))
 cv_means = []

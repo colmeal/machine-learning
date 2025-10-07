@@ -1,0 +1,12 @@
+feature
+age
+height_cm
+weight_kg
+bmi
+heart_rate
+blood_pressure
+sleep_hours
+nutrition_quality
+activity_index
+smokes_bin
+gender_M

@@ -128,7 +128,7 @@ knn_pca = KNeighborsClassifier(
 knn_pca.fit(Xtr_pca, y_train)
 
 # Gera a malha para a fronteira
-h = 0.03
+h = 0.05
 x_min, x_max = Xtr_pca[:, 0].min() - 0.5, Xtr_pca[:, 0].max() + 0.5
 y_min, y_max = Xtr_pca[:, 1].min() - 0.5, Xtr_pca[:, 1].max() + 0.5
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h),

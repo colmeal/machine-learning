@@ -137,6 +137,8 @@ nav:
   - KNN: ./KNN/main.md
   - K-Mean: ./K-Mean/main.md
   - MetricasAvaliacao: ./MetricasAvaliacao/main.md
+  - PageRank: ./PageRank/main.md
+  - PySpark: ./PySpark/main.md
   - Roteiros:
     - Roteiro 1: ./roteiro1/main.md
     - Roteiro 2: ./roteiro2/main.md

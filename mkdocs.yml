@@ -138,6 +138,7 @@ nav:
   - K-Mean: ./K-Mean/main.md
   - MetricasAvaliacao: ./MetricasAvaliacao/main.md
   - Random Forest: ./RandomForest/main.md
+  - Support Vector Machine: ./SupportVectorMachine/main.md
   - PageRank: ./PageRank/main.md
   - PySpark: ./PySpark/main.md
   - Roteiros:

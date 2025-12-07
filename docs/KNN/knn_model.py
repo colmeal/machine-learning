@@ -27,7 +27,7 @@ x_test  = pd.read_csv(X_TEST_PATH)
 y_train = pd.read_csv(Y_TRAIN_PATH)["is_fit"]
 y_test  = pd.read_csv(Y_TEST_PATH)["is_fit"]
 
-# === 2) Seu pré-processamento: one-hot + align (sem alterar sua lógica) ===
+# === 2) pré-processamento: one-hot + align  ===
 categorical_cols = x_train.select_dtypes(include=['object', 'category']).columns
 if len(categorical_cols) > 0:
     x_train = pd.get_dummies(x_train, columns=categorical_cols, drop_first=True)
@@ -35,11 +35,11 @@ if len(categorical_cols) > 0:
     # Alinha colunas (preenche colunas faltantes com 0)
     x_train, x_test = x_train.align(x_test, join='left', axis=1, fill_value=0)
 
-# Garante tipo numérico (caso sobre alguma coluna problem)
+# Garante tipo numérico 
 x_train = x_train.apply(pd.to_numeric, errors="coerce")
 x_test  = x_test.apply(pd.to_numeric, errors="coerce")
 
-# Se houver NaN residuais, substitui pela média DA COLUNA DO TREINO (conservador)
+#  Trata valores ausentes (com médias das colunas)
 if x_train.isnull().any().any():
     x_train = x_train.fillna(x_train.mean(numeric_only=True))
 if x_test.isnull().any().any():

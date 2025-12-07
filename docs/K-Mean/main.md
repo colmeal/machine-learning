@@ -1,4 +1,4 @@
-# 🧩 Projeto de Machine Learning – K-Means
+# Projeto de Machine Learning – K-Means
 
 ---
 
@@ -7,7 +7,7 @@
 O dataset analisado, **`fitness_dataset.csv`**, contém **2.000 registros** e **11 variáveis**, relacionadas à **saúde e hábitos de vida** dos participantes.  
 O objetivo da análise foi aplicar **K-Means** para identificar **agrupamentos naturais (clusters)** de indivíduos com características semelhantes, sem utilizar a variável-alvo `is_fit`.
 
-### 🧠 Descrição das variáveis principais
+### Descrição das variáveis principais
 
 | Variável | Descrição | Tipo |
 |-----------|------------|------|
@@ -105,7 +105,7 @@ A redução de dimensionalidade com PCA exibe três agrupamentos principais:
 
 ## 5. Avaliação e Interpretação dos Resultados
 
-### 🧩 Perfis médios por cluster
+###  Perfis médios por cluster
 
 | Cluster | Perfil predominante | Características médias observadas |
 |---|---|---|

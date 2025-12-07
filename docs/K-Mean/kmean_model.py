@@ -56,7 +56,7 @@ cluster_profile.to_csv(cluster_profile_path)
 fit_dist.to_csv(fit_dist_path)
 out.to_csv(assignments_path, index=False)
 
-# 6) Prints de resumo
+# 6) 
 print("\n== Perfis médios por cluster ==")
 print(cluster_profile)
 print("\n== Proporção de is_fit por cluster ==")

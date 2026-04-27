@@ -1,6 +1,6 @@
-# 🤖 Machine Learning — Mateus Colmeal
+#  Machine Learning — Mateus Colmeal
 
-> Repositório de projetos práticos de Machine Learning desenvolvidos durante a graduação em Sistemas de Informação na ESPM (2025.1).
+> Repositório de projetos práticos de Machine Learning desenvolvidos durante a graduação em Sistemas de Informação na ESPM (2025.4).
 > Cada módulo documenta o pipeline completo: exploração de dados, pré-processamento, treinamento, avaliação e comparação de modelos.
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)](https://www.python.org/)
@@ -28,7 +28,6 @@ A documentação gerada com MkDocs detalha cada algoritmo com: relatório técni
 | [K-Means](https://colmeal.github.io/machine-learning/K-Mean/main/) | K-Means Clustering | — | — | Clusterização não supervisionada |
 | [SVM](https://colmeal.github.io/machine-learning/SupportVectorMachine/main/) | Support Vector Machine | — | — | Fronteira de decisão com kernel RBF |
 | [PageRank](https://colmeal.github.io/machine-learning/PageRank/main/) | PageRank | — | — | Análise de grafos e ranking de nós |
-| [PySpark](https://colmeal.github.io/machine-learning/PySpark/main/) | ML distribuído | — | — | Pipeline com Apache Spark |
 | [Métricas de Avaliação](https://colmeal.github.io/machine-learning/MetricasAvaliacao/main/) | — | — | — | Precision, Recall, F1, Curva ROC |
 
 ---
@@ -52,7 +51,7 @@ O mesmo dataset (`fitness_dataset.csv`, classificação binária `is_fit`) foi u
 ## 🛠️ Stack
 
 - **Linguagem:** Python 3.12  
-- **ML:** Scikit-learn, PySpark  
+- **ML:** Scikit-learn 
 - **Dados:** Pandas, NumPy  
 - **Visualização:** Matplotlib  
 - **Documentação:** MkDocs + Material for MkDocs  
